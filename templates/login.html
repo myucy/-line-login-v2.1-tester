@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <title>LINEログインv2.1 URLジェネレーター</title>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+
+<body>
+
+
+    <br>
+
+
+    <div class="container">
+        <div class="card text-white bg-primary mb-3">
+
+            <div class="card-body">
+                <h4 class="card-title">
+                    LINEログインv2.1 URLジェネレーター
+                </h4>
+                <p class="card-text">
+                    <a href="https://developers.line.biz/ja/docs/line-login/integrate-line-login/"
+                        style="color: white;">ドキュメント</a>
+                </p>
+            </div>
+        </div>
+        <form action="./login" method="POST" id="login">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group"><br>
+                        <h4>client_id (channel_id)</h4>
+                        <select class="form-control" name="ChannelIdValue">
+                            <option value="チャネルIDを入力">チャネルIDを入力</option>
+
+                        </select>
+                        <p class="help-block">
+                            どれか一つ選択してください。自由に入力したい場合は直接入力してください。<br>
+                            DEVELOPING状態のチャネルへのLINEログインにはチャネルのAdminもしくは、テスター登録が必要です。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4>scope (permission)</h4>
+                        <select class="form-control" multiple="multiple" name="ScopeValue">
+                            <option value="profile" selected="selected">profile</option>
+                            <option value="openid" selected="selected">openid</option>
+                            <option value="email">email</option>
+                            <option value="chat_message.write" selected="selected">chat_message.write</option>
+                            <option value="phone">phone</option>
+                            <option value="birthdate">birthdate</option>
+                            <option value="real_name">real_name</option>
+                            <option value="gender">gender</option>
+                            <option value="address">address</option>
+                        </select>
+                        <p class="help-block">
+                            複数選択することができます。最低必ず1つのscopeを指定する必要があります。<br>
+                            <code>email</code>や<code>phone</code>等のprofile+の情報を取得する場合、<code>openid</code>も指定する必要があります。<br>
+                            <a href="https://developers.line.biz/ja/docs/partner-docs/line-profile-plus/">profile+</a>のscopeは権限を付与されたアカウントでのみ利用できます。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4>redirect_uri</h4>
+                        <input type="text" class="form-control" name="redirect_uriValue"
+                            value="コールバックURLを入力">
+                        <p class="help-block">
+                            この値はLINE Developersのコンソール画面より事前に登録しておく必要があります。<br><br>
+                            外部ブラウザ<code>?openExternalBrowser=1</code><br>
+                            カスタムタブ(Android限定)<code>?openInAppBrowser=0</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4>state</h4>
+                        <input type="text" class="form-control" name="stateValue" value="{{state}}">
+                        <p class="help-block">
+                            変更するとstateの検証に失敗します。<br>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4>prompt</h4>
+                        <select class="form-control" name="promptValue">
+                            <option value="">none</option>
+                            <option value="consent" selected="selected">consent</option>
+                        </select>
+                        <p class="help-block">
+                            必要に応じて変更してください。<br>
+                            <code>none</code>: ユーザーが要求された権限をすべて同意済みの場合、同意画面がスキップされます。<br />
+                            <code>consent</code>: 必ず同意画面が表示されます。<br />
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4>bot_prompt</h4>
+                        <select class="form-control" name="bot_promptValue">
+                            <option value="">none</option>
+                            <option value="normal">normal</option>
+                            <option value="aggressive">aggressive</option>
+                        </select>
+                        <p class="help-block">
+                            必要に応じて変更してください。<br>
+                            <code>none</code>:BOTを友だち追加するオプションを表示しません。 <br>
+                            <code>normal</code>: 利用条件の同意画面に、LINE公式アカウントを友だち追加するオプションを追加します。<br>
+                            <code>aggressive</code>:
+                            利用条件の同意画面の後に、LINE公式アカウントを友だち追加するかどうか確認する画面を開きます。<br />
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <p>
+                <button type="button" class="btn btn btn-success" data-toggle="collapse" data-target="#collapseExample"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    その他パラメータ
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <div class="form-group">
+                        <h4>nonce</h4>
+                        <input type="text" class="form-control" name="nonceValue" value="nonce-abcd1234">
+                        <p class="help-block">
+                            必要に応じて変更してください。
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <h4>max_age</h4>
+                        <input type="text" class="form-control" name="max_ageValue">
+                        <p class="help-block">
+                            認証が有効な時間を秒数で指定します。指定した時間を経過した後には、未認証扱いとなります。<br>
+                            本parameterが指定されると、その他の条件によらずID Tokenにauth_timeが含まれるようになります。<br>
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <h4>ui_locales</h4>
+                        <select class="form-control" name="ui_localesValue" style="width:100%;">
+                            <option value="">none</option>
+                            <option value="ja-jp">ja-jp</option>
+                            <option value="en-us">en-us</option>
+                            <option value="zh-tw">zh-tw</option>
+                            <option value="zh-cn">zh-cn</option>
+                            <option value="ko-kr">ko-kr</option>
+                            <option value="th-tl">th-tl</option>
+                        </select>
+                        <p class="help-block">
+                            LINEログインで表示される画面の表示言語および文字種を指定します。<br>
+                            <code>none</code>: 指定なし。LINEアプリおよびOSの利用言語に依存して自動的に言語が選択されます。<br />
+                            <code>ja-jp</code>: 日本語<br />
+                            <code>en-us</code>: 英語（米国）<br />
+                            <code>zh-tw</code>: 中国語（繁体字）<br />
+                            <code>zh-cn</code>: 中国語（簡体字）<br />
+                            <code>ko-kr</code>: 韓国語<br />
+                            <code>th-tl</code>: タイ語<br />
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+
+            <br>
+            <button type="submit" class="btn btn-primary" style="width:100%">LINE Login</button>
+        </form>
+        <br>
+
+    </div>
+    </div>
+
+</body>
+
+<script>
+    $('select[class="form-control"]').select2({
+        tags: true
+    });
+
+</script>
+
+</html>

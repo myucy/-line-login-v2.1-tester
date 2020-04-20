@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <title>LINEログインv2.1 URLジェネレーター</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" ></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    </script>
+</head>
+
+<body>
+    <div class="container"><br>
+        <div class="card text-white bg-primary mb-3">
+            <h5 div class="card-header">
+                LINEログインv2.1 URLジェネレーター
+            </h5 div>
+            <div class="card-body">
+                <p class="card-text">
+                    LINEログイン成功</p>
+            </div>
+        </div>
+
+
+        <div class="alert alert-primary" role="alert">
+            アクセストークン発行
+        </div>
+        <div class="card card-body">
+            <h5>client_id (channel_id)</h5>
+            <select class="form-control" id="ChannelIdValue">
+                <option value="チャネルIDを入力">チャネルIDを入力</option>
+            </select>
+            <br>
+            <h5>client_secret</h5>
+            <select class="form-control" id="client_secret" style="width:100%;">
+                <option value="チャネルシークレットを入力">チャネルシークレットを入力
+                </option>
+            </select>
+            <br>
+            <h5>redirect_uri</h5>
+            <input type="text" class="form-control" id="redirect_uriValue" value="{{uri}}">
+
+            <br>
+            <h5>code</h5>
+            <input type="text" class="form-control" id="codeValue" value="{{code}}">
+            <br>
+            <div class="row">
+                <div class="col">
+                    <br>
+                    <button class="btn btn-primary" type="button" id="AccessTokenIssue">アクセストークン発行</button>
+                    <br>
+                </div>
+            </div>
+
+            <div class="collapse" id="result_AccessTokenIssue">
+
+                <br>
+
+                <h5> ステータスコード</h5>
+                <input type="text" class="form-control" id="AccessTokenIssue_response_status">
+                <br>
+                <div class="form-group">
+                    <h5>レスポンスボディ</h5>
+                    <textarea class="form-control" id="AccessTokenIssue_response_body" rows="10ß"></textarea>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <br>
+        <br>
+        <div class="alert alert-success" role="alert">
+            Idトークン検証
+        </div>
+
+
+        <div class="card card-body">
+
+
+            <h5>Idtoken</h5>
+            <input type="text" class="form-control" id="IdtokenRawValue" value="">
+            <br>
+
+            <h5>client_id (channel_id)</h5>
+            <select class="form-control" id="ChannelIdIdtokenValue">
+                <option value="チャネルIDを入力">チャネルIDを入力</option>
+
+            </select>
+            <div class="row">
+                <div class="col">
+                    <br>
+                    <button class="btn btn-success" type="button" id="IdtokenValidation">Idトークン検証</button>
+                    <br>
+                </div>
+            </div>
+
+            <div class="collapse" id="result_IdtokenValidation">
+
+
+                <br>
+                <h5>ステータスコード</h5>
+                <input type="text" class="form-control" id="IdtokenValidation_response_status_code">
+                <br>
+                <div class="form-group">
+                    <h5>レスポンスボディ</h5>
+                    <textarea class="form-control" id="IdtokenValidation_response_body" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+    <br>
+
+
+    </div>
+    <br>
+    </div>
+
+
+
+
+
+</body>
+<script>
+
+    $('select[class="form-control"]').select2({
+        tags: true
+    });
+
+
+    $('#AccessTokenIssue').on('click', function AccessTokenIssue() {
+        var client_idValue = $("#ChannelIdValue").val();
+        var client_secretValue = $("#client_secret").val();
+        var redirect_uriValue = $("#redirect_uriValue").val();
+        var codeValue = $("#codeValue").val();
+        body = {
+            "client_id": client_idValue, "client_secret": client_secretValue, "redirect_uri": redirect_uriValue, "code": codeValue
+        }
+        body = JSON.stringify(body)
+        fetch('/accesstoken', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+            },
+            body: body
+
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                $('#result_AccessTokenIssue').collapse('show')
+                $("#AccessTokenIssue_response_status").val(JSON.stringify(json.response_status_code, null, "\t"))
+                $("#AccessTokenIssue_response_body").val(JSON.stringify(json.response_body, null, "\t"))
+                $("#IdtokenRawValue").val(json.response_body.id_token)
+            })
+    }
+    )
+
+
+
+    $('#IdtokenValidation').on('click', function IdtokenValidation() {
+        var IdtokenRawValue = $("#IdtokenRawValue").val();
+        var ChannelIdIdtokenValue = $("#ChannelIdIdtokenValue").val();
+        body = {
+            "id_token": IdtokenRawValue, "client_id": ChannelIdIdtokenValue
+        }
+        body = JSON.stringify(body)
+        fetch('/idtoken', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+            },
+            body: body
+
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                result_IdtokenValidation
+                $('#result_IdtokenValidation').collapse('show')
+                $("#IdtokenValidation_response_status_code").val(JSON.stringify(json.response_status_code, null, "\t"))
+                $("#IdtokenValidation_response_body").val(JSON.stringify(json.response_body, null, "\t"))
+            })
+    }
+    )
+
+
+</script>
+
+</html>

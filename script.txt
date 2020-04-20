@@ -1,0 +1,5 @@
+#Server 
+gunicorn -b 0.0.0.0:8000 app:app --config guniconf.py --reload
+
+#kill
+pkill gunicorn
