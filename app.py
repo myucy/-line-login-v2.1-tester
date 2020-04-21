@@ -83,14 +83,15 @@ def Callbackpage():
 
     error_description = request.args.get('error_description')
 
-    # 認可リクエストをキャンセルした場合などのerrorの制御
-    if error:
-        return "[Error] Not Logined: " + error + "\n" + error_description, 400
-
-    # stateの検証
+    # エラーハンドリングよりも先にstateの検証を行う
     expected_state = session.get('state')
     if state != expected_state:
         return "[Error] state does not match", 400
+
+
+    # 認可リクエストをキャンセルした場合などのerrorの制御
+    if error:
+        return "[Error] Not Logined: " + error + "\n" + error_description, 400
 
     return render_template('callback.html',
                            code=code,
